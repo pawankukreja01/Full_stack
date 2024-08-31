@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradise Nursery - Products</title>
+    <style>
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: green;
+            color: white;
+        }
+        .cart-icon {
+            cursor: pointer;
+            padding: 10px;
+            background-color: rgb(65, 37, 131);
+            width: 30px;
+        }
+        .product {
+            display: inline-block;
+            width: 30%;
+            margin: 15px;
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        button {
+            padding: 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Paradise Nursery</h2>
+        <div>
+            <span class="cart-icon" onclick="window.location.href='cart.html'">🛒 <span id="cart-count">0</span></span>
+        </div>
+    </header>
+
+    <h1>Our Plants</h1>
+    <div class="product">
+        <img src="Succulent.jpeg" alt="Plant 1">
+        <h3>Succulent</h3>
+        <p>$25.00</p>
+        <button onclick="addToCart('Monstera', 25.00)">Add to Cart</button>
+    </div>
+    <div class="product">
+        <img src="Alovera.jpeg" alt="Plant 2">
+        <h3>Alo Vera</h3>
+        <p>$30.00</p>
+        <button onclick="addToCart('Fiddle Leaf Fig', 30.00)">Add to Cart</button>
+    </div>
+    <!-- Add more products here -->
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function addToCart(plantName, price) {
+            const item = cart.find(p => p.name === plantName);
+            if (item) {
+                item.quantity += 1;
+            } else {
+                cart.push({ name: plantName, price: price, quantity: 1 });
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        }
+
+        updateCartCount();
+    </script>
+</body>
+</html>

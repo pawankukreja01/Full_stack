@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paradise Nursery - Cart</title>
+    <style>
+        header {
+            display: flex;
+            justify-content: space-between;
+            padding: 100px;
+            background-color: green;
+            color: white;
+        }
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .delete {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Paradise Nursery</h2>
+        <div>
+            <span class="cart-icon">🛒 <span id="cart-count">0</span></span>
+        </div>
+    </header>
+
+    <h1>Your Shopping Cart</h1>
+    <table id="cart-table">
+        <thead>
+            <tr>
+                <th>Plant</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Cart items will be dynamically added here -->
+        </tbody>
+    </table>
+    <h3>Total: $<span id="total-cost">0.00</span></h3>
+    <button onclick="window.location.href='products.html'">Continue Shopping</button>
+    <button onclick="checkout()">Checkout</button>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function renderCart() {
+            const cartTable = document.getElementById('cart-table').getElementsByTagName('tbody')[0];
+            cartTable.innerHTML = '';
+            let totalCost = 0;
+
+            cart.forEach((item, index) => {
+                const row = cartTable.insertRow();
+                row.insertCell(0).textContent = item.name;
+                row.insertCell(1).textContent = `$${item.price.toFixed(2)}`;
+                row.insertCell(2).textContent = item.quantity;
+                row.insertCell(3).textContent = `$${(item.price * item.quantity).toFixed(2)}`;
+
+                const actionCell = row.insertCell(4);
+                const increaseBtn = document.createElement('button');
+                increaseBtn.textContent = '+';
+                increaseBtn.onclick = () => updateQuantity(index, 1);
+
+                const decreaseBtn = document.createElement('button');
+                decreaseBtn.textContent = '-';
+                decreaseBtn.onclick = () => updateQuantity(index, -1);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.className = 'delete';
+                deleteBtn.onclick = () => removeItem(index);
+
+                actionCell.appendChild(increaseBtn);
+                actionCell.appendChild(decreaseBtn);
+                actionCell.appendChild(deleteBtn);
+
+                totalCost += item.price * item.quantity;
+            });
+
+            document.getElementById('total-cost').textContent = totalCost.toFixed(2);
+            updateCartCount();
+        }
+
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function checkout() {
+            alert('Proceeding to checkout...');
+            localStorage.removeItem('cart');
+            window.location.href = 'index.html';
+        }
+
+        function updateCartCount() {
+            document.getElementById('cart-count').textContent = cart.reduce((total, item) => total + item.quantity, 0);
+        }
+
+        renderCart();
+    </script>
+</body>
+</html>
